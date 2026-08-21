@@ -1,0 +1,48 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: url-service-api
+          uri: lb://url-service
+          predicates:
+            - Path=/api/v1/shorten,/api/v1/urls/**
+        - id: url-service-redirect
+          uri: lb://url-service
+          predicates:
+            - Path=/{shortCode:[a-zA-Z0-9]+}
+        - id: analytics-service
+          uri: lb://analytics-service
+          predicates:
+            - Path=/api/v1/analytics/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,gateway,env,loggers
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true

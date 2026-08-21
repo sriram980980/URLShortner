@@ -1,0 +1,7 @@
+server.host: "0.0.0.0"
+server.name: url-shortner-kibana
+elasticsearch.hosts: ["http://elasticsearch:9200"]
+xpack.security.enabled: false
+xpack.encryptedSavedObjects.encryptionKey: "url-shortner-kibana-key-32chars!!"
+monitoring.ui.container.elasticsearch.enabled: true
+logging.root.level: info

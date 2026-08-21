@@ -1,0 +1,135 @@
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: #f5f5f5;
+  line-height: 1.6;
+}
+
+html, body {
+  height: 100%;
+}
+
+.card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+mat-card {
+  padding: 1.5rem;
+  border-radius: 4px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.result-box {
+  background: #e8f5e9;
+  border-radius: 4px;
+  padding: 1rem;
+  margin-top: 1rem;
+  word-break: break-all;
+}
+
+.count-display {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #3f51b5;
+  text-align: center;
+  padding: 1rem;
+}
+
+/* Material snackbar customization */
+.error-snackbar {
+  background-color: #d32f2f !important;
+  color: white !important;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Print styles */
+@media print {
+  body {
+    background-color: white;
+  }
+
+  mat-toolbar {
+    display: none;
+  }
+
+  main {
+    max-width: 100%;
+    padding: 0;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  body {
+    background-color: #ffffff;
+  }
+
+  main {
+    padding: 1rem !important;
+  }
+
+  .card-container {
+    gap: 1rem;
+  }
+
+  mat-card {
+    padding: 1rem;
+  }
+
+  .button-group {
+    flex-direction: column !important;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .result-value {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .user-agent-cell,
+  .url-cell {
+    max-width: 150px !important;
+  }
+
+  .events-table th,
+  .events-table td {
+    padding: 0.5rem !important;
+    font-size: 0.85rem;
+  }
+}
