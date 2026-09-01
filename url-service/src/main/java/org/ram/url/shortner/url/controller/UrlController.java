@@ -30,7 +30,7 @@ public class UrlController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.createShortUrl(request, baseUrl));
     }
 
-    @GetMapping("/{shortCode:[a-zA-Z0-9]{6,10}}")
+    @GetMapping("/{shortCode:[a-zA-Z0-9]+}")
     public ResponseEntity<Void> redirect(
             @PathVariable String shortCode,
             HttpServletRequest servletRequest) {

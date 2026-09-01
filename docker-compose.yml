@@ -1,4 +1,4 @@
-﻿#version: "3.9"
+#version: "3.9"
 
 services:
   # Security & Secrets Management
@@ -63,20 +63,18 @@ services:
       timeout: 5s
       retries: 5
 
-  # Caching Layer
-  redis:
-    image: redis:7.2-alpine
-    container_name: url-shortner-redis
+  # Database Layer
+  mongodb:
+    image: mongo:7.0
+    container_name: url-shortner-mongodb
     ports:
-      - "6379:6379"
+      - "27017:27017"
     volumes:
-      - redis-data:/data
-      - ./docker/redis/redis.conf:/usr/local/etc/redis/redis.conf
-    command: redis-server /usr/local/etc/redis/redis.conf
+      - mongodb-data:/data/db
     networks:
       - url-shortner-net
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD-SHELL", "echo 'db.runCommand(\"ping\").ok' | mongosh localhost:27017/test --quiet"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -220,16 +218,17 @@ services:
     depends_on:
       discovery-server:
         condition: service_healthy
-      redis:
+      mongodb:
         condition: service_healthy
       kafka:
         condition: service_healthy
     environment:
       CONFIG_SERVER_URL: http://config-server:8888
       SPRING_APPLICATION_NAME: url-service
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: ""
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+      MONGODB_DATABASE: urlshortener
+      MONGODB_URI: mongodb://mongodb:27017/urlshortener
       KAFKA_SERVERS: kafka:9092
       VAULT_ENABLED: "false"
       VAULT_HOST: vault
@@ -340,7 +339,7 @@ networks:
     driver: bridge
 
 volumes:
-  redis-data:
+  mongodb-data:
     driver: local
   es-data:
     driver: local

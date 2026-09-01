@@ -5,15 +5,9 @@ spring:
   application:
     name: url-service
   data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
-      lettuce:
-        pool:
-          max-active: 10
-          max-idle: 5
-          min-idle: 1
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://${MONGODB_HOST:localhost}:${MONGODB_PORT:27017}/${MONGODB_DATABASE:urlshortener}}
+      auto-index-creation: true
   kafka:
     bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
     producer:

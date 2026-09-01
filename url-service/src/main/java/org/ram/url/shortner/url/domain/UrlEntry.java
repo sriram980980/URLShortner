@@ -2,31 +2,55 @@ package org.ram.url.shortner.url.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.time.Instant;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Document(collection = "urls")
 public class UrlEntry implements Serializable {
+
+    @Id
+    private String id;
+
+    @Indexed(unique = true)
     private String shortCode;
-    private String longUrl;
+
+    @Indexed(unique = true)
+    private String originalUrl;
+
     private Instant createdAt;
     private Instant expiresAt;
     private long clickCount;
 
     public UrlEntry() {}
 
-    public UrlEntry(String shortCode, String longUrl, Instant createdAt, Instant expiresAt) {
+    public UrlEntry(String shortCode, String originalUrl, Instant createdAt, Instant expiresAt) {
+        this(shortCode, originalUrl, createdAt, expiresAt, 0L);
+    }
+
+    public UrlEntry(String shortCode, String originalUrl, Instant createdAt, Instant expiresAt, long clickCount) {
         this.shortCode = shortCode;
-        this.longUrl = longUrl;
+        this.originalUrl = originalUrl;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;
-        this.clickCount = 0;
+        this.clickCount = clickCount;
     }
 
     @JsonIgnore
     public boolean isExpired() {
         return expiresAt != null && Instant.now().isAfter(expiresAt);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getShortCode() {
@@ -37,12 +61,21 @@ public class UrlEntry implements Serializable {
         this.shortCode = shortCode;
     }
 
+    public String getOriginalUrl() {
+        return originalUrl;
+    }
+
+    public void setOriginalUrl(String originalUrl) {
+        this.originalUrl = originalUrl;
+    }
+
+    // Alias methods for compatibility
     public String getLongUrl() {
-        return longUrl;
+        return originalUrl;
     }
 
     public void setLongUrl(String longUrl) {
-        this.longUrl = longUrl;
+        this.originalUrl = longUrl;
     }
 
     public Instant getCreatedAt() {
