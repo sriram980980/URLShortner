@@ -30,6 +30,9 @@ class UrlShortenerServiceTest {
     @Mock
     private ClickEventProducer clickEventProducer;
 
+    @Mock
+    private java.util.concurrent.Executor clickEventExecutor;
+
     @InjectMocks
     private UrlShortenerService service;
 
@@ -38,6 +41,10 @@ class UrlShortenerServiceTest {
     @BeforeEach
     void setUp() {
         baseUrl = "http://localhost:8081";
+        lenient().doAnswer(invocation -> {
+            ((Runnable) invocation.getArgument(0)).run();
+            return null;
+        }).when(clickEventExecutor).execute(any(Runnable.class));
     }
 
     @Test
