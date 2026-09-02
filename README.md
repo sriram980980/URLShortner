@@ -37,7 +37,7 @@ The URL Shortener platform follows a microservices architecture pattern with the
 | Service | Port | Purpose |
 |---------|------|---------|
 | **Vault** | 8200 | Secrets management and encryption |
-| **Redis** | 6379 | In-memory caching with hybrid persistence |
+| **Mongo** | 27017 | Mongo No SQL persistence |
 | **Kafka** | 9092 | Event streaming and asynchronous messaging |
 | **Zookeeper** | 2181 | Kafka coordinator and configuration management |
 | **Elasticsearch** | 9200 | Distributed search and log storage |
@@ -59,7 +59,7 @@ Services start in the following dependency order:
    All wait for Discovery Server
 5. **Frontend** - Waits for API Gateway
 6. **Infrastructure** (background):
-   - Redis, Kafka, Zookeeper, Elasticsearch, Logstash, Kibana, Zipkin
+   - MongoDb, Kafka, Zookeeper, Elasticsearch, Logstash, Kibana, Zipkin
 
 ---
 
@@ -188,7 +188,6 @@ ng serve --open
 **Purpose**: Core business logic for URL shortening.
 - Generate unique short codes (Base62)
 - Store URL mappings
-- Cache frequently accessed URLs in Redis
 - Publish events to Kafka
 - Redirect to original URLs
 
@@ -237,7 +236,7 @@ docker compose up -d
 
 ```bash
 # Start only infrastructure
-docker compose up -d redis kafka zookeeper elasticsearch logstash kibana zipkin vault
+docker compose up -d mongodb kafka zookeeper elasticsearch logstash kibana zipkin vault
 
 # Run Spring services locally (see Quick Start section above)
 ```
@@ -254,8 +253,8 @@ mvn test jacoco:report
 # View logs
 docker compose logs -f url-service
 
-# Connect to Redis
-docker exec -it url-shortner-redis redis-cli
+# Connect to mongodb
+docker exec -it url-shortner-mongodb mongosh
 
 # List Kafka topics
 docker exec url-shortner-kafka kafka-topics.sh --bootstrap-server localhost:9092 --list
@@ -381,16 +380,15 @@ curl -X DELETE http://localhost:8080/api/v1/urls/abc123 \
 - **Key Metrics**:
   - `http_requests_total` - Total HTTP requests
   - `http_request_duration_seconds` - Request duration
-  - `redis_commands_total` - Redis operations
-  - `jvm_memory_used_bytes` - JVM memory
+   - `jvm_memory_used_bytes` - JVM memory
 
 ### Health Checks
 ```bash
 # Check service health
 curl http://localhost:8080/actuator/health
 
-# Check Redis
-docker exec url-shortner-redis redis-cli ping
+# Check mongodb
+docker exec url-shortner-mongodb mongodbsh 
 
 # Check Kafka
 docker exec url-shortner-kafka kafka-broker-api-versions.sh --bootstrap-server localhost:9092
@@ -412,8 +410,7 @@ cp .env.example .env
 
 Key variables:
 ```
-REDIS_HOST=localhost
-KAFKA_BOOTSTRAP_SERVERS=localhost:9092
+ KAFKA_BOOTSTRAP_SERVERS=localhost:9092
 ELASTICSEARCH_URIS=http://localhost:9200
 VAULT_TOKEN=dev-root-token
 BASE_URL=http://localhost:8080
@@ -469,18 +466,7 @@ docker compose restart SERVICE_NAME
 docker network inspect url-shortner-net
 ```
 
-### Redis Issues
-```bash
-# Check Redis status
-docker exec url-shortner-redis redis-cli ping
-
-# Clear Redis cache (development only)
-docker exec url-shortner-redis redis-cli FLUSHDB
-
-# View Redis logs
-docker logs url-shortner-redis
-```
-
+ 
 ### Kafka Issues
 ```bash
 # Check Kafka status
