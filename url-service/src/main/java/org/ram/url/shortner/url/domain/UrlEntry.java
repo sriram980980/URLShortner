@@ -16,17 +16,17 @@ public class UrlEntry implements Serializable {
     @Id
     private String id;
 
-    @Indexed(unique = true)
+    // @Indexed(unique = true) handld at startup ensure idx
     private String shortCode;
 
-    @Indexed(unique = true)
     private String originalUrl;
 
     private Instant createdAt;
     private Instant expiresAt;
     private long clickCount;
 
-    public UrlEntry() {}
+    public UrlEntry() {
+    }
 
     public UrlEntry(String shortCode, String originalUrl, Instant createdAt, Instant expiresAt) {
         this(shortCode, originalUrl, createdAt, expiresAt, 0L);

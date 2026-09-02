@@ -20,8 +20,7 @@ public class MongoConfig {
     @EventListener(ApplicationReadyEvent.class)
     public void initIndices() {
         mongoTemplate.indexOps(UrlEntry.class)
-                .ensureIndex(new Index().on("shortCode", Sort.Direction.ASC).unique());
-        mongoTemplate.indexOps(UrlEntry.class)
-                .ensureIndex(new Index().on("originalUrl", Sort.Direction.ASC).unique());
+                .ensureIndex(
+                        new Index().named("shortCode_unique_idx").on("shortCode", Sort.Direction.ASC).unique());
     }
 }

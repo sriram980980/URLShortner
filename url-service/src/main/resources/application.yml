@@ -9,7 +9,7 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_URI:mongodb://${MONGODB_HOST:localhost}:${MONGODB_PORT:27017}/${MONGODB_DATABASE:urlshortener}}
-      auto-index-creation: true
+      auto-index-creation: false
   kafka:
     bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
     producer:
